@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body onload="onInit()">
+    <h1>Mine Sweeper</h1>
+    <div class="container">
+        <div class="display-panel"><span><a data-level="4" onclick="changeLevel(4)">Easy</a></span>
+            <span><a data-level="6" onclick="changeLevel(6)">Medium</a></span>
+            <span><a data-level="8" onclick="changeLevel(8)">Hard</a></span>
+        </div>
+        <div class="restart-game"><span onclick="handelNewGame()">😁</span></div>
+        <table>
+            <tbody   class="board"></tbody>
+      </table>
+    </div>
+
+    <script src="/js/main.js"></script> 
+</body>
+</html>
