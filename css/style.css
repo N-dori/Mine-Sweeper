@@ -1,0 +1,25 @@
+body{
+    box-sizing: border-box;
+    background-color: rgb(216, 130, 25);
+}
+h1{
+    text-align: center;
+    color: black;
+}
+.container{
+    margin: auto;
+    max-width: 700px;
+}
+table{
+    margin: auto;
+    width: 50%;
+    border: 2px solid black;
+}
+table td{
+    margin: auto;
+    width: 30px;
+    height: 30px;
+    border: 2px solid black;
+    color: antiquewhite;
+
+}
