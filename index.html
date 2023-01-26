@@ -10,8 +10,13 @@
 <body onload="onInit()">
     <h1>Mine Sweeper</h1>
     <div class="container">
+        <div class="display-panel"><span><a onclick="changeLevel(4)">Easy</a></span>
+            <span><a onclick="changeLevel(6)">Medium</a></span>
+            <span><a onclick="changeLevel(8)">Hard</a></span>
+        </div>
+        <div class="restart-game"><span class="smailey" onclick="handelNewGame()">😁</span></div>
         <table>
-            <tbody class="board"></tbody>
+            <tbody   class="board"></tbody>
       </table>
     </div>
 

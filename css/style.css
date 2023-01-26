@@ -1,25 +1,57 @@
 body{
     box-sizing: border-box;
-    background-color: rgb(216, 130, 25);
+    background-image: url("/img/mines.jpg");
+    /* background-repeat: no-repeat; */
 }
 h1{
     text-align: center;
-    color: black;
+    color: rgb(246, 254, 0);
+    background-color: gray;
+    font-weight: 700;
+    font-size: 55px;
 }
 .container{
     margin: auto;
-    max-width: 700px;
+    max-width: 900px;
 }
 table{
+    position: absolute;
+    left: 26%;
     margin: auto;
     width: 50%;
-    border: 2px solid black;
 }
 table td{
     margin: auto;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+
     border: 2px solid black;
-    color: antiquewhite;
+    color: rgb(226, 10, 21);
+    background-color: rgb(125, 122, 119);
+
+    text-align: center;
+    font-weight: bold;
+   
+}
+.display-panel{
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    font-size: 35px;
+    font-weight: bold;
+    color: rgb(246, 254, 0);
+    background-color: gray;
+    /* border-radius: 15px,15px; */
+    /* background-color: rgb(159, 156, 151); */
+}
+.restart-game{
+    margin-left: 15%;
+    margin-right: 15%;
+    text-align: center;
+    font-size: 35px;
+    background-color: gray;
 
 }

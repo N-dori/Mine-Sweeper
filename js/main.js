@@ -2,40 +2,198 @@
 const MINE = '💣'
 const EMPTY = ''
 const FLAG = '🚩'
+const SCERED = "😬"
+const HAPPY = "😁"
+const SAD = "😞"
+var gIsFirstClick = true
+
 var gLevel = {
     size: 4,
     mines: 2,
 }
-var gBoard 
+var gBoard
 var gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
 }
-//onInit()
 
 function onInit() {
+
     gBoard = buildBoard()
     renderBoard(gBoard)
-    console.log(gBoard);
+}
+function changeLevel(num) {
+    gGame.isOn= false
+    if (num === 4) {
+        gLevel.size = num
+        gLevel.mines = num / 2
+    }
+    else if (num === 6) {
+        gLevel.size = num
+        gLevel.mines = (num ** 2) / 3
+    }
+    else if (num === 8) {
+        gLevel.size = num
+        gLevel.mines = (num ** 2) / 3
+    }
+onInit()
+handelNewGame()
+}
+function checkvictory() {
+    var mineMarked = 0
+    var nonMineShown = 0
+    for (let i = 0; i < gBoard.length; i++) {
+        for (let j = 0; j < gBoard[i].length; j++) {
+            var currCell = gBoard[i][j]
+            if (currCell.isMine) {
+                if (currCell.isMarked) mineMarked++
+            } else {
+                if (currCell.isShown) nonMineShown++
+            }
+        }
+    }
+    if ((mineMarked == +gLevel.mines) &&
+        (nonMineShown == (gLevel.size ** 2) - (+gLevel.mines))) {
+        console.log('victory');
+
+    }
+}
+function handelNewGame() {
+    gGame.isOn = false
+    gIsFirstClick = true
+    const elcells = document.querySelectorAll('.cell')
+    const elsmailey = document.querySelector('.smailey')
+    elsmailey.innerHTML = HAPPY
+    elcells.forEach(elcell => {
+        elcell.innerHTML = EMPTY
+        elcell.style.backgroundColor = 'gray'
+
+    });
+    for (let i = 0; i < gBoard.length; i++) {
+        for (let j = 0; j < gBoard[i].length; j++) {
+            var currPos = gBoard[i][j]
+            currPos.isMine = false
+            currPos.isShown = false
+            currPos.isMarked = false
+        }
+
+    }
+
+    console.log('gBord', gBoard);
+
+    onInit
+}
+function handelGameOver() {
+    var elsmailey = document.querySelector('.smailey')
+
+    elsmailey.innerHTML = SAD
+    for (let i = 0; i < gBoard.length; i++) {
+        for (let j = 0; j < gBoard[i].length; j++) {
+
+            const currPos = gBoard[i][j]
+            var elcell = document.querySelector(`.cell-${i}-${j}`)
+            if (currPos.isMine) {
+                elcell.innerHTML = MINE
+            } else {
+                elcell.innerHTML = gBoard[i][j].minesAroundCount
+            }
+        }
+    }
+}
+
+function handelRightclick(elCell) {
+    var i = +elCell.dataset.i
+    var j = +elCell.dataset.j
+    var currPos = gBoard[i][j]
+
+    if (gBoard[i][j].isMarked) {
+        currPos.isMarked = false
+        elCell.innerHTML = ""
+    } else {
+        currPos.isMarked = true
+        elCell.innerHTML = FLAG
+    }
+}
+
+function cellClicked(elCell) {
+    if (gGame.isOn) return
+    var i = +elCell.dataset.i
+    var j = +elCell.dataset.j
+    var currPos = gBoard[i][j]
+
+    if (currPos.isMine) {
+        handelGameOver()
+        gGame.isOn = true
+    } else {
+        currPos.isShown = true
+        elCell.innerHTML = gBoard[i][j].minesAroundCount
+        elCell.style.backgroundColor = 'lightgray'
+        handelFistClick(elCell, i, j)
+        expandShown(gBoard,elCell, i, j)
+
+    }
    
-    var c= setMinesNegsCount(gBoard, 1, 2)
-    console.log('c',c);
+    checkvictory()
 }
- function renderCell(location, value) {
-    // Select the elCell and set the value
-    elCell.innerHTML = value
+function expandShown(board,elCell, rowIdx, colIdx) {
+    if (board[rowIdx][colIdx].minesAroundCount === EMPTY) {
+        for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+            if (i < 0 || i >= board.length) continue
+            for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+                if (i === rowIdx && j === colIdx) continue
+                if (j < 0 || j >= board.length) continue
+                if(board[i][j].isMine)continue
+                if(board[i][j].minesAroundCount!==EMPTY){
+                    var elcell = document.querySelector(`.cell-${i}-${j}`)
+                    elcell.innerHTML=board[i][j].minesAroundCount
+                }
+                board[i][j].isShown=true
+                var elcell = document.querySelector(`.cell-${i}-${j}`)
+                elcell.style.backgroundColor = 'lightgray'
+
+                console.log('board[i][j].isShown',board[i][j].isShown);
+            }
+        }
+    }
 }
-function cellClicked(elCell){
-    var i= +elCell.dataset.i
-    var j= +elCell.dataset.j
-     elCell.innerHTML = gBoard[i][j].minesAroundCount
+function handelShowncolor() {
+    for (let i = 0; i < gBoard.length; i++) {
+        for (let j = 0; j < gBoard[i].length; j++) {
+
+            const currPos = gBoard[i][j]
+            var elcell = document.querySelector(`.cell-${i}-${j}`)
+            if (currPos.isShown) {
+                elcell.style.backgroundColor = 'lightgray'
+            } else {
+                return
+            }
+        }
+    }
+}
+function handelFistClick(elcell, i, j) {
+    if (gIsFirstClick) {
+        gBoard[i][j].isShown = true
+        elcell.style.backgroundColor = 'lightgray'
+        gIsFirstClick = false
+        setMinesOnBoard(gBoard)
+
+        for (let i = 0; i < gBoard.length; i++) {
+            for (let j = 0; j < gBoard[i].length; j++) {
+                var currPos = gBoard[i][j]
+                if (!currPos.isMine) {
+                    currPos.minesAroundCount = setMinesNegsCount(gBoard, i, j)
+                }
+            }
+        }
+    }
+    return
 }
 
 function setMinesNegsCount(board, rowIdx, colIdx) {
     var mineCount = 0
-    if(board[rowIdx][colIdx].isMine)return
+    if (board[rowIdx][colIdx].isMine) return
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         if (i < 0 || i >= board.length) continue
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
@@ -44,9 +202,9 @@ function setMinesNegsCount(board, rowIdx, colIdx) {
             var currCell = board[i][j]
             if (currCell.isMine === true) mineCount++
         }
-    } 
-    if (mineCount===0) return EMPTY
-        return mineCount
+    }
+    if (mineCount === 0) return EMPTY
+    return mineCount
 }
 
 function renderBoard(board) {
@@ -54,19 +212,17 @@ function renderBoard(board) {
     for (let i = 0; i < gLevel.size; i++) {
         strHTML += `<tr>`
         for (let j = 0; j < gLevel.size; j++) {
-            var cell = board[i][j]
-            if(cell.isMine===false){
-                cell.minesAroundCount= setMinesNegsCount(board, i, j) 
-            }   
+
             const className = `cell cell-${i}-${j}`
-            strHTML += `<td data-i="${i}" data-j="${j} "class="${className}" onclick="cellClicked(this)">
-            ${cell.isMine ? MINE :EMPTY}</td>`
-            
+            strHTML += `<td data-i="${i}" data-j="${j} "class="${className}"
+             onclick="cellClicked(this)"oncontextmenu="handelRightclick(this)" >
+            </td>`
+
         }
         var elTable = document.querySelector('.board')
         elTable.innerHTML = strHTML
     }
-   
+
 }
 
 
@@ -79,29 +235,26 @@ function buildBoard() {
                 minesAroundCount: '',
                 isShown: false,
                 isMine: false,
-                isMarked: true,
+                isMarked: false,
             }
             board[i][j] = cell
-
         }
     }
-    setMinesOnBoard(board)
     return board
 }
 
 function setMinesOnBoard(board) {
-    for (let i = 0; i < board.length; i++) {
-        for (let j = 0; j < board.length; j++) {
-            if ((i === 2 && j === 3) || (i === 0 && j === 2)) {
-                board[i][j].isMine = true
 
-            }
-
-        }
+    for (let i = 0; i < gLevel.mines; i++) {
+        console.log('gLevel.mines', gBoard.mines);
+        board[getRandomInt(0, board.length)][getRandomInt(0, board.length)].isMine = true
 
     }
-}
+    // board[2][3].isMine = true
+    // board[0][2].isMine = true
+    return
 
+}
 
 function createMat(ROWS, COLS) {
     var mat = []
@@ -114,3 +267,22 @@ function createMat(ROWS, COLS) {
     }
     return mat
 }
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+// --------------- mouse events----------------------------
+document.addEventListener('contextmenu', function (event) {
+    event.preventDefault();
+}, true);
+document.addEventListener('mousedown', function () {
+    var elsmailey = document.querySelector('.smailey')
+    elsmailey.innerHTML = SCERED
+});
+document.addEventListener('mouseup', function () {
+    var elsmailey = document.querySelector('.smailey')
+    elsmailey.innerHTML = HAPPY
+});
+
